@@ -1,0 +1,47 @@
+﻿@page "/todo"
+@inject MyTodoApp.Services.ITodoService todoService
+
+<h1>Todo Page</h1>
+
+<p>Incomplete Todos: @todoService?.Todos?.Count(y => !y.Status)</p>
+
+<h3>Add Todo</h3>
+<input @bind-value="TodoItem" />
+<button class="btn btn-primary" @onclick="AddTodo">Add Todo</button>
+
+
+<h3>Todo's List</h3>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <td>Item</td>
+            <td>Status</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in todoService.Todos)
+        {
+            <tr>
+                <td>@item.Item</td>
+                <td>@item.Status</td>
+                <td>
+                    <input type="button" value="Mark Complete" @onclick="() => { MarkAsComplete(item); }" />
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private int currentCount = 0;
+    public string TodoItem { get; set; }
+    private void AddTodo()
+    {
+        todoService.Todos.Add(new Entities.Todo {Item = TodoItem, Status = false });
+        TodoItem = string.Empty;
+    }
+    private void MarkAsComplete(MyTodoApp.Entities.Todo todo)
+    {
+        todo.Status = true;
+    }
+}
